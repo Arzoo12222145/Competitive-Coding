@@ -1,0 +1,19 @@
+class Solution {
+public:
+    double averageWaitingTime(vector<vector<int>>& customers) {
+        int n = customers.size();
+        double waitingTime = customers[0][1];
+        int finished = customers[0][0] + customers[0][1];
+        for(int i = 1; i < n; i++){
+            vector<int> times = customers[i];
+            int arrive = times[0];
+
+            int start = max(arrive, finished);
+            int end = start + times[1];
+            finished = end;
+            waitingTime += end - arrive;
+        }
+
+        return waitingTime / n;
+    }
+};
