@@ -1,0 +1,77 @@
+class Graph{
+public:
+    int V; 
+    int E;
+    vector<pair<int, int>> *adj; 
+    Graph(int num_vertices, int num_edges){
+        this->V = num_vertices;
+        this->E = num_edges;
+        this->adj = new vector<pair<int, int>>[num_vertices];
+    }
+    
+    void addEdge(int u, int v, int w){
+        adj[u].push_back({v, w});
+    }
+
+    vector<int> topSort(int src){
+
+        vector<int> indegree(V, 0);
+        for(int i=0;i<V;++i){
+            for(pair<int, int> node:this->adj[i]){
+                indegree[node.first]++;
+            }
+        }
+
+        queue<int> q;
+        for(int i=0;i<V;++i){
+            if(indegree[i]==0)
+                q.push(i);
+        }
+              
+        vector<int> topSortOrdering;
+        
+        while(!q.empty()){
+            
+            int u = q.front();
+            q.pop();
+
+            topSortOrdering.push_back(u);
+           
+            for(pair<int, int> node:this->adj[u]){
+                indegree[node.first]--;
+                
+                if(indegree[node.first]==0){
+                    
+                    q.push(node.first);
+                }
+            }
+            
+        }      
+        return topSortOrdering;
+    }
+    void findShortestPathInDAG(int src){
+        
+        vector<int> distances(V, INT_MAX);  
+        vector<int> topSortOrdering = topSort(src);
+        distances[src]=0;
+        
+        for(int x:topSortOrdering){
+            
+            if(distances[x]!=INT_MAX){
+                
+                for(pair<int, int> adjNode : this->adj[x]){
+                    if(distances[adjNode.first] > distances[x]+adjNode.second){
+                        distances[adjNode.first] = distances[x]+adjNode.second;
+                    }
+                }   
+            }
+        }
+        
+        cout<<"The distances from the src node are: ";
+        for(int i=0;i<V;++i){
+            if(distances[i]==INT_MAX) cout<<"INF ";
+            else cout<<distances[i]<<" ";
+        }
+    }
+    
+};
